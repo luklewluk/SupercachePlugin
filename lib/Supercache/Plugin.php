@@ -2,49 +2,67 @@
 
 namespace Supercache;
 
+use noFlash\SupercacheBundle\Cache\CacheManager;
+use noFlash\SupercacheBundle\Filesystem\Finder;
 use Pimcore\API\Plugin as PluginLib;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Supercache\Logger\LoggerProxy;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
+    static protected $dirPath = 'plugins/Supercache/webcache/';
+    protected $cacheManager;
+    protected $documentManager;
+
     public function init() {
+
+        $this->documentManager = new DocumentManager();
+
+        $finder = new Finder(self::$dirPath, new LoggerProxy());
+        $this->cacheManager = new CacheManager($finder);
+
+        $front = \Zend_Controller_Front::getInstance();
+        $front->registerPlugin(new Cache($finder, $this->documentManager), 902);
 
         parent::init();
 
-        // register your events here
-
-        // using anonymous function
-        \Pimcore::getEventManager()->attach("document.postAdd", function ($event) {
-            // do something
-            $document = $event->getTarget();
-        });
-
-        // using methods
-        \Pimcore::getEventManager()->attach("document.postUpdate", array($this, "handleDocument"));
-
-        // for more information regarding events, please visit:
-        // http://www.pimcore.org/wiki/display/PIMCORE/Event+API+%28EventManager%29+since+2.1.1
-        // http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html
-        // http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124202
+        \Pimcore::getEventManager()->attach("document.preUpdate", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("document.preDelete", array($this, "deleteCache"));
 
     }
 
-    public function handleDocument ($event) {
-        // do something
-        $document = $event->getTarget();
+    public function deleteCache ($event) {
+        // TODO: Delete cache in pages which use snippets
+        $path = $this->documentManager->getPathByEvent($event);
+        $this->cacheManager->deleteEntryRecursive($path);
     }
 
 	public static function install (){
-        // implement your own logic here
+        mkdir(self::$dirPath);
         return true;
 	}
 	
 	public static function uninstall (){
-        // implement your own logic here
+        $it = new RecursiveDirectoryIterator(self::$dirPath, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach($files as $file) {
+            if ($file->isDir()){
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+        rmdir(self::$dirPath);
         return true;
 	}
 
 	public static function isInstalled () {
-        // implement your own logic here
-        return true;
+        if (file_exists(self::$dirPath)){
+            return true;
+        }
+        else {
+            return false;
+        }
 	}
 }
