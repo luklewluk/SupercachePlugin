@@ -1,0 +1,3 @@
+[submodule "lib/noflash/supercachebundle"]
+	path = lib/noflash/supercachebundle
+	url = https://github.com/kiler129/SupercacheBundle.git
