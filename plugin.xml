@@ -27,6 +27,7 @@
 			<!-- namespaces to register with autoloader-->
 			<pluginNamespaces>
 				<namespace>Supercache</namespace>
+				<namespace>Psr\Log</namespace>
 				<namespace>noFlash\SupercacheBundle</namespace>
 			</pluginNamespaces>
 

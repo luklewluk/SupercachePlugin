@@ -2,6 +2,8 @@
 
 namespace Supercache\Logger;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Original supercache-bundle is a Symfony Bundle and it keeps PSR standards
  * so logger supposes to be a LoggerInterface instance.

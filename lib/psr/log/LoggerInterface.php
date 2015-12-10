@@ -1,6 +1,6 @@
 <?php
 
-namespace Supercache\Logger;
+namespace Psr\Log;
 
 /**
  * Describes a logger instance.
