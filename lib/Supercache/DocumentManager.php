@@ -7,9 +7,12 @@ use Zend_EventManager_Event;
 
 class DocumentManager
 {
-    protected function findPrettyUrl(Page $page)
+    protected function findPrettyUrl($page)
     {
-        return $page->getPrettyUrl();
+        if ($page instanceof Page) {
+            return $page->getPrettyUrl();
+        }
+        return null;
     }
 
     /**
@@ -18,7 +21,6 @@ class DocumentManager
      */
     public function getPathByEvent(Zend_EventManager_Event $event)
     {
-        /** @var Page $page */
         $page = $event->getTarget();
         $prettyUrl = $this->findPrettyUrl($page);
         return $prettyUrl !== null ? $prettyUrl : $page->getFullPath();

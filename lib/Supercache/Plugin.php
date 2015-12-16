@@ -9,13 +9,15 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Supercache\Logger\LoggerProxy;
 
-class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
+class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
+{
 
     static protected $dirPath = 'plugins/Supercache/webcache/';
     protected $cacheManager;
     protected $documentManager;
 
-    public function init() {
+    public function init()
+    {
 
         $this->documentManager = new DocumentManager();
 
@@ -32,22 +34,25 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     }
 
-    public function deleteCache ($event) {
+    public function deleteCache($event)
+    {
         // TODO: Delete cache in pages which use snippets
         $path = $this->documentManager->getPathByEvent($event);
         $this->cacheManager->deleteEntryRecursive($path);
     }
 
-	public static function install (){
+    public static function install()
+    {
         mkdir(self::$dirPath);
         return true;
-	}
-	
-	public static function uninstall (){
+    }
+
+    public static function uninstall()
+    {
         $it = new RecursiveDirectoryIterator(self::$dirPath, RecursiveDirectoryIterator::SKIP_DOTS);
         $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach($files as $file) {
-            if ($file->isDir()){
+        foreach ($files as $file) {
+            if ($file->isDir()) {
                 rmdir($file->getRealPath());
             } else {
                 unlink($file->getRealPath());
@@ -55,14 +60,14 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         }
         rmdir(self::$dirPath);
         return true;
-	}
+    }
 
-	public static function isInstalled () {
-        if (file_exists(self::$dirPath)){
+    public static function isInstalled()
+    {
+        if (file_exists(self::$dirPath)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
-	}
+    }
 }
