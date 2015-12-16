@@ -5,17 +5,16 @@ namespace Supercache;
 use Pimcore\Model\Document\Page;
 use Zend_EventManager_Event;
 
+/**
+ * Class DocumentManager
+ * @package Supercache
+ *
+ * Class which is created to managing Pimcore documents.
+ */
 class DocumentManager
 {
-    protected function findPrettyUrl($page)
-    {
-        if ($page instanceof Page) {
-            return $page->getPrettyUrl();
-        }
-        return null;
-    }
-
     /**
+     * Find Pimcore document URL
      * @param Zend_EventManager_Event $event
      * @return string
      */
@@ -27,11 +26,15 @@ class DocumentManager
     }
 
     /**
-     * @return string
+     * Try to get "pretty url" if is set
+     * @param $page
+     * @return null|string
      */
-    public function getViewRender()
+    protected function findPrettyUrl($page)
     {
-        $layout = new \Zend_View_Helper_Layout();
-        return $layout->getLayout()->render();
+        if ($page instanceof Page) {
+            return $page->getPrettyUrl();
+        }
+        return null;
     }
 }

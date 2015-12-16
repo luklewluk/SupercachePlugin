@@ -9,44 +9,36 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Supercache\Logger\LoggerProxy;
 
+/**
+ * Class Plugin
+ * @package Supercache
+ *
+ * Pimcore plugin class which is necessary to run
+ * the whole Supercache, set it as a Zend Plugin and
+ * configure the plugin from Pimcore Extension Manager.
+ */
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
-
     static protected $dirPath = 'plugins/Supercache/webcache/';
     protected $cacheManager;
     protected $documentManager;
 
-    public function init()
-    {
-
-        $this->documentManager = new DocumentManager();
-
-        $finder = new Finder(self::$dirPath, new LoggerProxy());
-        $this->cacheManager = new CacheManager($finder);
-
-        $front = \Zend_Controller_Front::getInstance();
-        $front->registerPlugin(new Cache($finder, $this->documentManager), 902);
-
-        parent::init();
-
-        \Pimcore::getEventManager()->attach("document.preUpdate", array($this, "deleteCache"));
-        \Pimcore::getEventManager()->attach("document.preDelete", array($this, "deleteCache"));
-
-    }
-
-    public function deleteCache($event)
-    {
-        // TODO: Delete cache in pages which use snippets
-        $path = $this->documentManager->getPathByEvent($event);
-        $this->cacheManager->deleteEntryRecursive($path);
-    }
-
+    /**
+     * Creates directory to store cache files.
+     *
+     * @return bool
+     */
     public static function install()
     {
         mkdir(self::$dirPath);
         return true;
     }
 
+    /**
+     * Removes cache directory with all files inside.
+     *
+     * @return bool
+     */
     public static function uninstall()
     {
         $it = new RecursiveDirectoryIterator(self::$dirPath, RecursiveDirectoryIterator::SKIP_DOTS);
@@ -62,6 +54,11 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         return true;
     }
 
+    /**
+     * Checks if plugin is installed correctly.
+     *
+     * @return bool
+     */
     public static function isInstalled()
     {
         if (file_exists(self::$dirPath)) {
@@ -69,5 +66,39 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         } else {
             return false;
         }
+    }
+
+    /**
+     * The main plugin method. It is executing as first and it is setting
+     * Supercache as a Zend Plugin.
+     *
+     * @throws \Zend_EventManager_Exception_InvalidArgumentException
+     */
+    public function init()
+    {
+        $this->documentManager = new DocumentManager();
+
+        $finder = new Finder(self::$dirPath, new LoggerProxy());
+        $this->cacheManager = new CacheManager($finder);
+
+        $front = \Zend_Controller_Front::getInstance();
+        $front->registerPlugin(new Cache($finder), 902);
+
+        parent::init();
+
+        \Pimcore::getEventManager()->attach("document.preUpdate", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("document.preDelete", array($this, "deleteCache"));
+    }
+
+    /**
+     * Deletes cache entry recursively.
+     *
+     * @param $event
+     */
+    public function deleteCache($event)
+    {
+        // TODO: Delete cache in pages which use snippets
+        $path = $this->documentManager->getPathByEvent($event);
+        $this->cacheManager->deleteEntryRecursive($path);
     }
 }
