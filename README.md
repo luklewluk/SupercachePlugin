@@ -6,7 +6,7 @@ Because GitHub doesn't create zip & tarball including submodule files so the eas
 
 `git clone --recursive https://github.com/luklewluk/SupercachePlugin.git`
 
-Unfortunately for now only .htaccess setting is supported.
+For now unfortunately only .htaccess settings are supported.
 
 Also you need to modify your .htaccess file by your own by adding the following lines after `# forbid the direct access to pimcore-internal data (eg. config-files, ...)` and before `# basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html` sections:
 ```apacheconf
@@ -28,7 +28,7 @@ RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin [L]
 
 To get a full boost I recommend to turn on Pimcore "Output Cache". 
 Supercache supports "Output Cache" settings like excluded paths and excluded cookies. 
-Of course it is optional and if you don't know cases when you will need both caching systems there is no reason for turning it on.
+Of course it's optional and if you don't know when you will need both caching systems there's no reason for turning it on.
 
 # Some tests
 Simple Pimcore blog and request time (TTFB) per page:
