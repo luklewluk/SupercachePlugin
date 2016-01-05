@@ -8,6 +8,7 @@ use Pimcore\API\Plugin as PluginLib;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Supercache\Logger\LoggerProxy;
+use Supercache\Install\HtaccessConfig;
 
 /**
  * Class Plugin
@@ -35,6 +36,10 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             mkdir($path);
         }
 
+        if (!is_file($path . '/.htaccess')) {
+            file_put_contents($path . '/.htaccess', HtaccessConfig::getWebcacheHtaccess());
+        }
+
         if (self::isInstalled()) {
             return "Supercache Plugin successfully installed.";
         } else {
@@ -60,7 +65,11 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     public static function isInstalled()
     {
         if (is_dir(self::getInstallPath())) {
-            return true;
+            if (is_file(self::getInstallPath() . '/.htaccess')) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
