@@ -13,13 +13,12 @@ use Supercache\Logger\LoggerProxy;
  * Class Plugin
  * @package Supercache
  *
- * Pimcore plugin class which is necessary to run
+ * Pimcore plugin class is necessary to run
  * the whole Supercache, set it as a Zend Plugin and
  * configure the plugin from Pimcore Extension Manager.
  */
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
-    static protected $dirPath = 'plugins/Supercache/webcache/';
     protected $cacheManager;
     protected $documentManager;
 
@@ -30,28 +29,27 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public static function install()
     {
-        mkdir(self::$dirPath);
-        return true;
+        $path = self::getInstallPath();
+
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+
+        if (self::isInstalled()) {
+            return "Supercache Plugin successfully installed.";
+        } else {
+            return "Supercache Plugin could not be installed.";
+        }
     }
 
     /**
-     * Removes cache directory with all files inside.
+     * Returns path of cache directory
      *
-     * @return bool
+     * @return string
      */
-    public static function uninstall()
+    public static function getInstallPath()
     {
-        $it = new RecursiveDirectoryIterator(self::$dirPath, RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            if ($file->isDir()) {
-                rmdir($file->getRealPath());
-            } else {
-                unlink($file->getRealPath());
-            }
-        }
-        rmdir(self::$dirPath);
-        return true;
+        return PIMCORE_PLUGINS_PATH . "/Supercache/webcache";
     }
 
     /**
@@ -61,10 +59,35 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public static function isInstalled()
     {
-        if (file_exists(self::$dirPath)) {
+        if (is_dir(self::getInstallPath())) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Removes cache directory with all files inside.
+     *
+     * @return bool
+     */
+    public static function uninstall()
+    {
+        $it = new RecursiveDirectoryIterator(self::getInstallPath(), RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+        rmdir(self::getInstallPath());
+
+        if (!self::isInstalled()) {
+            return "Supercache Plugin successfully uninstalled.";
+        } else {
+            return "Supercache Plugin could not be uninstalled.";
         }
     }
 
@@ -78,7 +101,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     {
         $this->documentManager = new DocumentManager();
 
-        $finder = new Finder(self::$dirPath, new LoggerProxy());
+        $finder = new Finder(self::getInstallPath(), new LoggerProxy());
         $this->cacheManager = new CacheManager($finder);
 
         $front = \Zend_Controller_Front::getInstance();
