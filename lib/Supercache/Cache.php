@@ -6,7 +6,9 @@ use noFlash\SupercacheBundle\Cache\CacheElement;
 use noFlash\SupercacheBundle\Cache\CacheManager;
 use noFlash\SupercacheBundle\Filesystem\Finder;
 use Pimcore\Tool;
+use Zend_Controller_Front;
 use Zend_Controller_Plugin_Abstract;
+use Zend_Controller_Request_Abstract;
 
 /**
  * Class Cache
@@ -50,6 +52,9 @@ class Cache extends Zend_Controller_Plugin_Abstract
     {
         $this->checkRequest($this->_request);
 
+        $body = $this->getResponse()->getBody();
+        $type = $body[0] === '{' ? CacheElement::TYPE_JAVASCRIPT : CacheElement::TYPE_HTML;
+
         if ($this->isEnabled()) {
             $this->checkExcludedPatterns($this->_request->getRequestUri());
             $this->checkCookies();
@@ -57,8 +62,8 @@ class Cache extends Zend_Controller_Plugin_Abstract
 
         if (!$this->ignored && $this->getResponse()->getHttpResponseCode() == 200) {
             $cacheManager = new CacheManager($this->finder);
-            $cacheElement = new CacheElement($this->_request->getRequestUri(), $this->getResponse()->getBody(),
-                CacheElement::TYPE_HTML);
+            $cacheElement = new CacheElement($this->_request->getRequestUri(),
+                $body, $type);
             $cacheManager->saveElement($cacheElement);
         }
     }

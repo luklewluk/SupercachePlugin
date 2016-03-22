@@ -20,7 +20,14 @@ use Supercache\Install\HtaccessConfig;
  */
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
+    /**
+     * @var CacheManager
+     */
     protected $cacheManager;
+
+    /**
+     * @var DocumentManager
+     */
     protected $documentManager;
 
     /**
@@ -120,6 +127,8 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
         \Pimcore::getEventManager()->attach("document.preUpdate", array($this, "deleteCache"));
         \Pimcore::getEventManager()->attach("document.preDelete", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("object.preUpdate", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("object.preDelete", array($this, "deleteCache"));
     }
 
     /**
@@ -129,8 +138,6 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public function deleteCache($event)
     {
-        // TODO: Delete cache in pages which use snippets
-        $path = $this->documentManager->getPathByEvent($event);
-        $this->cacheManager->deleteEntryRecursive($path);
+        $this->cacheManager->clear();
     }
 }
