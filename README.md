@@ -6,9 +6,12 @@ Because GitHub doesn't create zip & tarball including submodule files so the eas
 
 `git clone --recursive https://github.com/luklewluk/SupercachePlugin.git`
 
-For now unfortunately only .htaccess settings are supported.
+Plugin directory name should be "Supercache".
 
-Also you need to modify your .htaccess file by your own by adding the following lines after `# forbid the direct access to pimcore-internal data (eg. config-files, ...)` and before `# basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html` sections:
+If you use Apache or LiteSpeed you need to modify your .htaccess file by your own by adding the following lines after `# forbid the direct access to pimcore-internal data (eg. config-files, ...)` and before `# basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html` sections:
+
+####Apache:
+
 ```apacheconf
 ### >>>SUPERCACHE BUNDLE
 RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
@@ -24,6 +27,20 @@ RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js [L]
 RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin -f
 RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin [L]
 ### <<<SUPERCACHE BUNDLE
+```
+
+####Nginx:
+
+Replace:
+
+```
+try_files $uri $uri/ /index.php?$args;
+```
+
+To:
+
+```
+try_files /plugins/Supercache/webcache/$cache_uri/index.js /plugins/Supercache/webcache/$cache_uri/index.html $uri $uri/ /index.php?$args ;
 ```
 
 To get a full boost I recommend to turn on Pimcore "Output Cache". 
