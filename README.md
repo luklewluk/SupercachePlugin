@@ -56,3 +56,21 @@ Simple Pimcore blog and request time (TTFB) per page:
 
 3. Pimcore without extra cache - ~79.5ms
 
+# Issues
+Sometimes Zend autoloader cannot load depended classes. Then you have to just change name of directories:
+
+```
+psr -> Psr
+```
+
+```
+log -> Log
+```
+
+```
+noflash -> noFlash
+```
+
+```
+supercachebundle -> SupercacheBundle
+```
