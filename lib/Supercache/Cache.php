@@ -64,6 +64,7 @@ class Cache extends Zend_Controller_Plugin_Abstract
             $cacheManager = new CacheManager($this->finder);
             $cacheElement = new CacheElement($this->_request->getRequestUri(),
                 $body, $type);
+            $cacheElement->setRawPath($this->_request->getRequestUri());
             $cacheManager->saveElement($cacheElement);
         }
     }
