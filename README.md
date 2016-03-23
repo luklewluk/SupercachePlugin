@@ -40,7 +40,7 @@ try_files $uri $uri/ /index.php?$args;
 To:
 
 ```
-try_files /plugins/Supercache/webcache/$cache_uri/index.js /plugins/Supercache/webcache/$cache_uri/index.html $uri $uri/ /index.php?$args ;
+try_files /plugins/Supercache/webcache/$request_uri/index.js /plugins/Supercache/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
 ```
 
 To get a full boost I recommend to turn on Pimcore "Output Cache". 
