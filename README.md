@@ -57,6 +57,7 @@ Simple Pimcore blog and request time (TTFB) per page:
 3. Pimcore without extra cache - ~79.5ms
 
 # Issues
+### Autoloader
 Sometimes Zend autoloader cannot load depended classes. Then you have to just change name of directories:
 
 ```
@@ -74,3 +75,20 @@ noflash -> noFlash
 ```
 supercachebundle -> SupercacheBundle
 ```
+
+### JSON response
+Due to Pimcore/Zend good practices you suppose to encode your output to JSON by the helper with following command:
+```
+$this->_helper->json($json);
+```
+Unfortunately your response won't be cached because shutdown event is not called if you finished your action by the JSON helper. The easiest solution is replace it to:
+```
+echo $this->_helper->json($json), false);
+```
+
+### Cache cleaning
+Currently any change clean the cache. It turned out to be the best solution especially if someone wants to use Supercache in really complex website with many object-document dependencies.
+If you want to clean cache manually you can do it by one of method below:
+
+1. Save any document or object in the Admin Panel. 
+2. Delete everything inside /plugins/Supercache/webcache except .htaccess
