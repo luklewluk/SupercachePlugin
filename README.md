@@ -4,7 +4,7 @@ Static pages &amp; files caching system for Pimcore.
 # Installation
 Because GitHub doesn't create zip & tarball including submodule files so the easiest way to get the plugin is clone repo by following command:
 
-`git clone --recursive https://github.com/luklewluk/SupercachePlugin.git`
+`git clone --recursive https://github.com/luklewluk/SupercachePlugin.git ./Supercache`
 
 Plugin directory name should be "Supercache".
 
@@ -81,9 +81,9 @@ Due to Pimcore/Zend good practices you suppose to encode your output to JSON by 
 ```
 $this->_helper->json($json);
 ```
-Unfortunately your response won't be cached because shutdown event is not called if you finished your action by the JSON helper. The easiest solution is replace it to:
+Unfortunately your response won't be cached because shutdown event can't be called. The easiest solution is replace it to:
 ```
-echo $this->_helper->json($json), false);
+echo $this->_helper->json($json, false);
 ```
 
 ### Cache cleaning
