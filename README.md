@@ -90,5 +90,8 @@ echo $this->_helper->json($json, false);
 Currently any change clean the cache. It turned out to be the best solution especially if someone wants to use Supercache in really complex website with many object-document dependencies.
 If you want to clean cache manually you can do it by one of method below:
 
-1. Save any document or object in the Admin Panel. 
-2. Delete everything inside /plugins/Supercache/webcache except .htaccess
+1. Clean "Output Cache" (since Pimcore 4.0)
+2. Save any document or object in the Administration Panel.
+3. Delete everything inside /plugins/Supercache/webcache except .htaccess
+
+Also Supercache is cleaned on maintenance mode activation (since Pimcore 4.0).

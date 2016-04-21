@@ -122,6 +122,8 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         \Pimcore::getEventManager()->attach("document.preDelete", array($this, "deleteCache"));
         \Pimcore::getEventManager()->attach("object.preUpdate", array($this, "deleteCache"));
         \Pimcore::getEventManager()->attach("object.preDelete", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("system.cache.clearOutputCache", array($this, "deleteCache"));
+        \Pimcore::getEventManager()->attach("admin.activateMaintenanceMode", array($this, "deleteCache"));
     }
 
     /**
