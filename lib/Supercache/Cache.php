@@ -82,16 +82,16 @@ class Cache extends Zend_Controller_Plugin_Abstract
         }
 
         if (!$request->isSecure()) {
-            if (isset($_SERVER["HTTP_CACHE_CONTROL"]) && $_SERVER["HTTP_CACHE_CONTROL"] == "no-cache") {
+            if (isset($_SERVER["HTTP_CACHE_CONTROL"]) && $_SERVER["HTTP_CACHE_CONTROL"] === "no-cache") {
                 $this->ignored = true;
             }
 
-            if (isset($_SERVER["HTTP_PRAGMA"]) && $_SERVER["HTTP_PRAGMA"] == "no-cache") {
+            if (isset($_SERVER["HTTP_PRAGMA"]) && $_SERVER["HTTP_PRAGMA"] === "no-cache") {
                 $this->ignored = true;
             }
         }
 
-        if (session_id()) {
+        if (session_id() || isset($_COOKIE['pimcore_admin_sid'])) {
             $this->ignored = true;
         }
     }
