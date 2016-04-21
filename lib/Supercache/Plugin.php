@@ -26,11 +26,6 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     protected $cacheManager;
 
     /**
-     * @var DocumentManager
-     */
-    protected $documentManager;
-
-    /**
      * Creates directory to store cache files.
      *
      * @return bool
@@ -115,8 +110,6 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public function init()
     {
-        $this->documentManager = new DocumentManager();
-
         $finder = new Finder(self::getInstallPath(), new LoggerProxy());
         $this->cacheManager = new CacheManager($finder);
 
