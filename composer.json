@@ -1,0 +1,15 @@
+{
+  "name": "luklewluk/SupercachePlugin",
+  "type": "pimcore-plugin",
+  "license": "MIT",
+  "description": "Supercache Plugin for Pimcore",
+  "keywords": ["pimcore", "supercache", "cache", "fpc", "full", "page", "caching"],
+  "homepage": "https://github.com/luklewluk/SupercachePlugin",
+  "authors": [
+    {
+      "name": "Lukasz Lewandowski",
+      "email": "luklewluk@gmail.com",
+      "role": "Developer"
+    }
+  ]
+}
