@@ -56,7 +56,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public static function getInstallPath()
     {
-        return PIMCORE_PLUGINS_PATH . "/Supercache/webcache";
+        return __DIR__ . "/../../webcache";
     }
 
     /**
