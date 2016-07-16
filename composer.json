@@ -1,5 +1,5 @@
 {
-  "name": "luklewluk/SupercachePlugin",
+  "name": "luklewluk/supercache",
   "type": "pimcore-plugin",
   "license": "MIT",
   "description": "Supercache Plugin for Pimcore",
