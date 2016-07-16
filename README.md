@@ -2,34 +2,45 @@
 Static pages &amp; files caching system for Pimcore.
 
 # Installation
-Because GitHub doesn't create zip & tarball including submodule files so the easiest way to get the plugin is clone repo by following command:
+```
+composer require luklewluk/SupercachePlugin
+```
 
-`git clone --recursive https://github.com/luklewluk/SupercachePlugin.git ./Supercache`
-
-Plugin directory name should be "Supercache".
-
-If you use Apache or LiteSpeed you need to modify your .htaccess file by your own by adding the following lines after `# forbid the direct access to pimcore-internal data (eg. config-files, ...)` and before `# basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html` sections:
-
+Also you will need to modify your rewrite configuration:
+ 
 ####Apache:
 
-```apacheconf
+
+Edit your Pimcore .htaccess file by adding the following lines:
+ 
+```
 ### >>>SUPERCACHE PLUGIN
 RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
 RewriteCond %{QUERY_STRING} !^$
 RewriteRule . - [S=3]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.html -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.html [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.js -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.js [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.bin -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/SupercachePlugin/webcache/$1/index.bin [L]
 ### <<<SUPERCACHE PLUGIN
-```
+``` 
+ 
+It should be located after 
+
+`# forbid the direct access to pimcore-internal data (eg. config-files, ...)` 
+
+and before 
+
+`# basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html` 
 
 ####Nginx:
+
+Virtual host configuration:
 
 Replace:
 
@@ -40,7 +51,7 @@ try_files $uri $uri/ /index.php?$args;
 To:
 
 ```
-try_files /plugins/Supercache/webcache/$request_uri/index.js /plugins/Supercache/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
+try_files /plugins/SupercachePlugin/webcache/$request_uri/index.js /plugins/SupercachePlugin/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
 ```
 
 # Some tests
@@ -64,26 +75,9 @@ Also Supercache is cleaned on maintenance mode activation (since Pimcore 4.0).
 
 
 # Issues
-### Autoloader
-Sometimes Zend autoloader cannot load depended classes. Then you have to just change name of directories:
-
-```
-psr -> Psr
-```
-
-```
-log -> Log
-```
-
-```
-noflash -> noFlash
-```
-
-```
-supercachebundle -> SupercacheBundle
-```
-
 ### JSON response
+Note: It can be useful if you want to cache JSON response as well.
+
 Due to Pimcore/Zend good practices you suppose to encode your output to JSON by the helper with following command:
 ```
 $this->_helper->json($json);
