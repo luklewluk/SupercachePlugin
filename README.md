@@ -19,14 +19,14 @@ RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
 RewriteCond %{QUERY_STRING} !^$
 RewriteRule . - [S=3]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.html -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.js -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.js [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.bin -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/supercache/webcache/$1/index.bin [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin [L]
 ### <<<SUPERCACHE PLUGIN
 ``` 
  
@@ -51,7 +51,7 @@ try_files $uri $uri/ /index.php?$args;
 To:
 
 ```
-try_files /plugins/supercache/webcache/$request_uri/index.js /plugins/supercache/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
+try_files /plugins/Supercache/webcache/$request_uri/index.js /plugins/Supercache/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
 ```
 
 # Some tests
@@ -69,7 +69,7 @@ If you want to clean cache manually you can do it by one of method below:
 
 1. Clean "Output Cache" (since Pimcore 4.0)
 2. Save any document or object in the Administration Panel.
-3. Delete everything inside ./plugins/supercache/webcache except .htaccess
+3. Delete everything inside ./plugins/Supercache/webcache except .htaccess
 
 Also Supercache is cleaned on maintenance mode activation (since Pimcore 4.0).
 
