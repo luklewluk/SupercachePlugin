@@ -6,7 +6,7 @@ Static pages &amp; files caching system for Pimcore.
 composer require luklewluk/supercache
 ```
 
-Also you will need to modify your rewrite configuration:
+Also you will need to make changes in your rewrite configuration:
  
 ####Apache:
 
