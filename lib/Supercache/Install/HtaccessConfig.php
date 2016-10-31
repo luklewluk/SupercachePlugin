@@ -35,14 +35,14 @@ RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
 RewriteCond %{QUERY_STRING} !^$
 RewriteRule . - [S=3]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.html -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/../webcache/%{HTTP_HOST}/$1/index.html -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$%{HTTP_HOST}/1/index.html [L]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.js -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.js [L]
+RewriteCond %{DOCUMENT_ROOT}/../webcache/%{HTTP_HOST}/$1/index.js -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/%{HTTP_HOST}/$1/index.js [L]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.bin -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.bin [L]
+RewriteCond %{DOCUMENT_ROOT}/../webcache/%{HTTP_HOST}/$1/index.bin -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/%{HTTP_HOST}/$1/index.bin [L]
 ### <<<SUPERCACHE BUNDLE';
 
     public static function getWebcacheHtaccess()
