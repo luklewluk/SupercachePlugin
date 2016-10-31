@@ -1,5 +1,10 @@
 # SupercachePlugin
-Static pages &amp; files caching system for Pimcore. Forked from original repo, extended with multisite capability.
+Static pages &amp; files caching system for Pimcore.
+
+# Installation
+```
+composer require luklewluk/supercache
+```
 
 Also you will need to make changes in your rewrite configuration:
  
