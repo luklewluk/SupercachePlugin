@@ -62,9 +62,9 @@ class Cache extends Zend_Controller_Plugin_Abstract
 
         if (!$this->ignored && $this->getResponse()->getHttpResponseCode() == 200) {
             $cacheManager = new CacheManager($this->finder);
-            $cacheElement = new CacheElement($this->_request->getRequestUri(),
-                $body, $type);
-            $cacheElement->setRawPath($this->_request->getRequestUri());
+            $path = '/' . $_SERVER['HTTP_HOST'] . $this->_request->getRequestUri();
+            $cacheElement = new CacheElement($path, $body, $type);
+            $cacheElement->setRawPath($path);
             $cacheManager->saveElement($cacheElement);
         }
     }

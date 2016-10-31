@@ -19,14 +19,14 @@ RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
 RewriteCond %{QUERY_STRING} !^$
 RewriteRule . - [S=3]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.html -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.html [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.js [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.js -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.js [L]
 
-RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/$1/index.bin [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.bin -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.bin [L]
 ### <<<SUPERCACHE PLUGIN
 ``` 
  
@@ -51,7 +51,7 @@ try_files $uri $uri/ /index.php?$args;
 To:
 
 ```
-try_files /plugins/Supercache/webcache/$request_uri/index.js /plugins/Supercache/webcache/$request_uri/index.html $uri $uri/ /index.php?$args;
+try_files /plugins/Supercache/webcache/$http_host/$request_uri/index.js /plugins/Supercache/webcache/$http_host/$request_uri/index.html $uri $uri/ /index.php?$args;
 ```
 
 # Some tests

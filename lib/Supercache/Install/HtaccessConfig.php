@@ -4,10 +4,21 @@ namespace Supercache\Install;
 
 /**
  * Store htaccess config as static accessible constants
+ *
+ * @package SupercachePlugin
+ * @author  Lukasz Lewandowski <luklewluk@gmail.com>
  */
 class HtaccessConfig
 {
-    const WEBCACHE_HTACCESS = 'RemoveHandler .php
+    /**
+     * Get htaccess file content for "webcache" folder
+     *
+     * @return string
+     */
+    public static function getWebcacheHtaccess()
+    {
+        $webcache = <<<HTACCESS
+RemoveHandler .php
 RemoveType .php
 Options -ExecCGI
 
@@ -16,7 +27,7 @@ Options -ExecCGI
 </IfModule>
 
 <IfModule mod_headers.c>
-    Header set Cache-Control \'max-age=3600, must-revalidate\'
+    Header set Cache-Control 'max-age=3600, must-revalidate'
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -28,30 +39,36 @@ Options -ExecCGI
     AddType application/javascript .js
     AddType text/html .html
     AddType application/octet-stream .bin
-</IfModule>';
+</IfModule>
+HTACCESS;
 
-    const SITE_HTACCESS = '### >>>SUPERCACHE BUNDLE
+        return $webcache;
+    }
+
+    /**
+     * Get Supercache htaccess config for Pimcore
+     *
+     * @return string
+     */
+    public static function getSiteHtaccess()
+    {
+        $site = <<<HTACCESS
+### >>>SUPERCACHE BUNDLE
 RewriteCond %{REQUEST_METHOD} !^(GET|HEAD) [OR]
 RewriteCond %{QUERY_STRING} !^$
 RewriteRule . - [S=3]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.html -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.html -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache//%{HTTP_HOST}/$1/index.html [L]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.js -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.js [L]
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.js -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.js [L]
 
-RewriteCond %{DOCUMENT_ROOT}/../webcache/$1/index.bin -f
-RewriteRule ^(.*) %{DOCUMENT_ROOT}/../webcache/$1/index.bin [L]
-### <<<SUPERCACHE BUNDLE';
+RewriteCond %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.bin -f
+RewriteRule ^(.*) %{DOCUMENT_ROOT}/plugins/Supercache/webcache/%{HTTP_HOST}/$1/index.bin [L]
+### <<<SUPERCACHE BUNDLE'
+HTACCESS;
 
-    public static function getWebcacheHtaccess()
-    {
-        return self::WEBCACHE_HTACCESS;
-    }
-
-    public static function getSiteHtaccess()
-    {
-        return self::SITE_HTACCESS;
+        return $site;
     }
 }
