@@ -33,6 +33,11 @@ class Cache extends Zend_Controller_Plugin_Abstract
      */
     protected $ignored = false;
 
+    /**
+     * @var bool
+     */
+    protected $minifyHtml = true;
+
 
     /**
      * Cache constructor.
@@ -52,7 +57,9 @@ class Cache extends Zend_Controller_Plugin_Abstract
     {
         $this->checkRequest($this->_request);
 
-        $body = $this->getResponse()->getBody();
+        // test if HTML minification is required
+        // otherwise use standard HTML
+        $body = ($this->minifyHtml)?$this->_minifyHtml($this->getResponse()->getBody()):$this->getResponse()->getBody();
         $type = $body[0] === '{' ? CacheElement::TYPE_JAVASCRIPT : CacheElement::TYPE_HTML;
 
         if ($this->isEnabled()) {
@@ -62,9 +69,9 @@ class Cache extends Zend_Controller_Plugin_Abstract
 
         if (!$this->ignored && $this->getResponse()->getHttpResponseCode() == 200) {
             $cacheManager = new CacheManager($this->finder);
-            $path = '/' . $_SERVER['HTTP_HOST'] . $this->_request->getRequestUri();
-            $cacheElement = new CacheElement($path, $body, $type);
-            $cacheElement->setRawPath($path);
+            $cacheElement = new CacheElement('/'.$_SERVER['HTTP_HOST'].$this->_request->getRequestUri(),
+                $body, $type);
+            $cacheElement->setRawPath('/'.$_SERVER['HTTP_HOST'].$this->_request->getRequestUri());
             $cacheManager->saveElement($cacheElement);
         }
     }
@@ -159,5 +166,46 @@ class Cache extends Zend_Controller_Plugin_Abstract
         if (isset($_COOKIE["pimcore_admin_sid"])) {
             $this->ignored = true;
         }
+    }
+
+    /**
+     * Minifies the HTML
+     *
+     * @param string $sHtml Source to minify
+     * @return mixed|string Minified output
+     */
+    private function _minifyHtml($sHtml = "") {
+        if (strlen($sHtml) > 0) {
+            $aReplace = array(
+                // remove JS line comments (simple only); do NOT remove lines containing URL (e.g. 'src="http://server.com/"')!!!
+                '~//[a-zA-Z0-9 ]+$~m' => '',
+                //remove new-line after JS's function or condition start; join with next line
+                '/\)[\r\n\t ]?{[\r\n\t ]+/s' => '){',
+                '/,[\r\n\t ]?{[\r\n\t ]+/s' => ',{',
+                //remove "empty" lines containing only JS's block end character; join with next line (e.g. "}\n}\n</script>" --> "}}</script>"
+                '/}[\r\n\t ]+/s' => '}',
+                '/}[\r\n\t ]+,[\r\n\t ]+/s' => '},',
+                //remove tabs before and after HTML tags
+                '/\>[^\S ]+/s' => '>',
+                '/[^\S ]+\</s' => '<',
+                //shorten multiple whitespace sequences; keep new-line characters because they matter in JS!!!
+                '/([\t ])+/s' => ' ',
+                //remove leading and trailing spaces
+                '/^([\t ])+/m' => '',
+                '/([\t ])+$/m' => '',
+                //remove empty lines (sequence of line-end and white-space characters)
+                '/[\r\n]+([\t ]?[\r\n]+)+/s' => "\n",
+                //remove empty lines (between HTML tags); cannot remove just any line-end characters because in inline JS they can matter!
+                '/\>[\r\n\t ]+\</s' => '><',
+                //remove new-line after JS's line end (only most obvious and safe cases)
+                '/\),[\r\n\t ]+/s' => '),',
+                //remove quotes from HTML attributes that does not contain spaces; keep quotes around URLs!
+                '~([\r\n\t ])?([a-zA-Z0-9]+)="([a-zA-Z0-9_/\\-]+)"([\r\n\t ])?~s' => '$1$2=$3$4', //$1 and $4 insert first white-space character found before/after attribute
+            );
+
+            $sHtml = preg_replace(array_keys($aReplace), array_values($aReplace), $sHtml);
+        }
+
+        return $sHtml;
     }
 }
